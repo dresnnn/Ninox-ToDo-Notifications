@@ -25,6 +25,18 @@ def _task_sort_key(task: Dict) -> Tuple[int, date]:
     return (prio_idx, due_date)
 
 
+def _format_date(value: str) -> Tuple[str, bool]:
+    """Return formatted due date and whether it is overdue."""
+    try:
+        due_date = date.fromisoformat(value)
+        formatted = due_date.strftime("%d.%m.%Y")
+        overdue = due_date <= date.today()
+    except Exception:
+        formatted = value
+        overdue = False
+    return formatted, overdue
+
+
 def format_tasks(tasks: List[Dict]) -> str:
     if not tasks:
         return "<p>Keine offenen Aufgaben.</p>"
@@ -36,21 +48,33 @@ th, td {border: 1px solid #ddd; padding: 8px;}
 th {background-color: #f2f2f2; text-align: left;}
 </style>
 <table>
-<tr><th>Aufgabe</th><th>Fälligkeit</th><th>Priorität</th><th>Kategorie</th><th>Notizen</th></tr>
+<tr><th>Status</th><th>Aufgabe</th><th>Fälligkeit</th><th>Priorität</th><th>Kategorie</th><th>Von</th><th>Bearbeiter</th></tr>
 """
 
     rows = []
     for t in tasks:
         f = t.get("fields", {})
         notes = f.get("Notizen", "").replace("\n", "<br>")
+
+        due_raw = f.get("Frist", "")
+        due_formatted, overdue = _format_date(due_raw)
+        if overdue:
+            due_cell = f"<span style='color:red;font-weight:bold'>{due_formatted}</span>"
+        else:
+            due_cell = due_formatted
+
         row = (
-            f"<tr><td>{f.get('Aufgabe','')}</td>"
-            f"<td>{f.get('Frist','')}</td>"
+            f"<tr><td>{f.get('Status','')}</td>"
+            f"<td>{f.get('Aufgabe','')}</td>"
+            f"<td>{due_cell}</td>"
             f"<td>{f.get('Priorität','')}</td>"
             f"<td>{f.get('Kategorie','')}</td>"
-            f"<td>{notes}</td></tr>"
+            f"<td>{f.get('Von','')}</td>"
+            f"<td>{f.get('Person','')}</td></tr>"
         )
         rows.append(row)
+        if notes:
+            rows.append(f"<tr><td colspan='7'>{notes}</td></tr>")
 
     return header + "".join(rows) + "</table>"
 

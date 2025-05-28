@@ -28,7 +28,10 @@ SAMPLE_TASK = {
     'fields': {
         'Aufgabe': 'Test',
         'Person': 'Bob',
-        'Status': 'unerledigt',
+        'Von': 'Alice',
+        'Kategorie': 'Cat',
+        'Notizen': 'Line1\nLine2',
+        'Status': 'in Bearbeitung',
         'Priorität': 'hoch',
         'Frist': '2024-01-01'
     }
@@ -43,4 +46,7 @@ def test_notify_sends_mail():
                 main(tmp.name)
                 send.assert_called_once()
                 args, _ = send.call_args
-                assert '<table>' in args[2]
+                html = args[2]
+                assert '<th>Status</th>' in html
+                assert '01.01.2024' in html
+                assert "<tr><td colspan='" in html

@@ -13,7 +13,24 @@ class NinoxClient:
             "Content-Type": "application/json",
         }
 
-    def get_tasks(self, status_field: str = "Status", open_value: str = "unerledigt") -> List[Dict[str, Any]]:
+    def get_tasks(
+        self,
+        status_field: str = "Status",
+        closed_values: List[str] | None = None,
+    ) -> List[Dict[str, Any]]:
+        """Return all tasks which are not completed.
+
+        Parameters
+        ----------
+        status_field: str
+            Name of the field describing the task status in Ninox.
+        closed_values: list[str] | None
+            Status values that mark a task as completed. If ``None`` the
+            defaults ``["erledigt", "abgeschlossen"]`` are used.
+        """
+        if closed_values is None:
+            closed_values = ["erledigt", "abgeschlossen"]
+        closed_values_lower = {v.lower() for v in closed_values}
         records = []
         page = 0
         per_page = 100
@@ -34,9 +51,10 @@ class NinoxClient:
             records.extend(batch)
             page += 1
         # filter open tasks
-        open_tasks = []
+        tasks = []
         for record in records:
             fields = record.get("fields", {})
-            if fields.get(status_field) == open_value:
-                open_tasks.append(record)
-        return open_tasks
+            status = str(fields.get(status_field, "")).lower()
+            if status not in closed_values_lower:
+                tasks.append(record)
+        return tasks
