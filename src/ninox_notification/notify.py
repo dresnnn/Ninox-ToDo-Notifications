@@ -39,12 +39,25 @@ def main(config_path: str):
 
     for username, user_cfg in cfg.users.items():
         user_tasks = tasks_by_user.get(username, [])
+
         if cfg.debug and not user_cfg.notify_in_debug:
+            print(f"[DEBUG] Skip {username} (notify_in_debug is False)")
             continue
+
+        if cfg.debug:
+            print(
+                f"[DEBUG] Preparing email for {username} with {len(user_tasks)} tasks"
+            )
+
         body = f"<h3>Offene Aufgaben ({len(user_tasks)})</h3>" + format_tasks(user_tasks)
         subject = "Deine offenen Aufgaben"
         try:
-            emailer.send(user_cfg.email, subject, body)
+            emailer.send(
+                user_cfg.email,
+                subject,
+                body,
+                force_send=cfg.debug and user_cfg.notify_in_debug,
+            )
         except Exception as exc:
             print(f"Failed to send mail to {user_cfg.email}: {exc}")
 
