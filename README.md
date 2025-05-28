@@ -56,6 +56,8 @@ ninox-notify-service config.yaml    # run as daily service
 ```
 
 The script retrieves all open tasks, groups them by user and sends a
-HTML email listing the tasks. Pagination is handled automatically.
+HTML email listing the tasks. Tasks are automatically sorted by
+priority and due date and rendered as a small table for better
+readability. Pagination is handled automatically.
 `ninox-notify-service` runs indefinitely and sends mails every day at
 the configured `send_time`.
