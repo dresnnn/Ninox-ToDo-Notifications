@@ -28,7 +28,9 @@ SAMPLE_TASK = {
     'fields': {
         'Aufgabe': 'Test',
         'Person': 'Bob',
-        'Status': 'unerledigt'
+        'Status': 'unerledigt',
+        'Priorität': 'hoch',
+        'Frist': '2024-01-01'
     }
 }
 
@@ -40,3 +42,5 @@ def test_notify_sends_mail():
             with patch('ninox_notification.emailer.Emailer.send') as send:
                 main(tmp.name)
                 send.assert_called_once()
+                args, _ = send.call_args
+                assert '<table>' in args[2]
