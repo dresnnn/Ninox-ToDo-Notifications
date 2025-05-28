@@ -1,7 +1,8 @@
 # Ninox-ToDo-Notifications
 
-This project fetches open tasks from a Ninox database and sends a daily
-summary email to each user. Configuration is done via a YAML file.
+This project fetches all active tasks (everything that is not completed)
+from a Ninox database and sends a daily summary email to each user.
+Configuration is done via a YAML file.
 
 ## Configuration
 
@@ -55,9 +56,17 @@ ninox-notify config.yaml            # send once
 ninox-notify-service config.yaml    # run as daily service
 ```
 
-The script retrieves all open tasks, groups them by user and sends a
-HTML email listing the tasks. Tasks are automatically sorted by
+The script retrieves all active tasks (open and in progress), groups them by
+user and sends a HTML email listing the tasks. Tasks are automatically sorted by
 priority and due date and rendered as a small table for better
 readability. Pagination is handled automatically.
 `ninox-notify-service` runs indefinitely and sends mails every day at
 the configured `send_time`.
+
+### Email output
+
+* Tasks include their current status and who created them.
+* Notes are shown in a separate row spanning the whole table for better
+  readability.
+* Due dates are formatted as `DD.MM.YYYY` and highlighted in red when
+  the task is overdue.
