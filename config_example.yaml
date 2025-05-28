@@ -1,0 +1,24 @@
+ninox:
+  api_url: "https://app.stadtbild.de/v1"
+  team_id: "TEAM_ID"
+  database_id: "DATABASE_ID"
+  table_id: "TABLE_ID"
+  api_token: "TOKEN"
+
+smtp:
+  host: "smtp.example.com"
+  port: 587
+  username: "user"
+  password: "pass"
+  from_address: "todo@example.com"
+
+users:
+  "André Bogatz":
+    email: "andre@example.com"
+    notify_in_debug: true
+  "Philipp Kabelka":
+    email: "philipp@example.com"
+    notify_in_debug: false
+
+send_time: "09:00"  # daily notification time
+debug: false
