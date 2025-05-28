@@ -9,14 +9,14 @@ class Emailer:
         self.config = config
         self.debug = debug
 
-    def send(self, recipient: str, subject: str, html_body: str):
+    def send(self, recipient: str, subject: str, html_body: str, *, force_send: bool = False):
         msg = EmailMessage()
         msg["From"] = self.config.from_address
         msg["To"] = recipient
         msg["Subject"] = subject
         msg.set_content(html_body, subtype="html")
 
-        if self.debug:
+        if self.debug and not force_send:
             print(f"[DEBUG] Would send email to {recipient}: {subject}")
             return
 

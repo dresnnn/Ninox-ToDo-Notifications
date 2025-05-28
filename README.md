@@ -36,7 +36,8 @@ users:
 ```
 
 `notify_in_debug` allows selected users to still receive mails when the
-`debug` flag is enabled.
+`debug` flag is enabled. In this mode the script prints additional
+information about which mails are prepared or skipped.
 
 ## Usage
 
