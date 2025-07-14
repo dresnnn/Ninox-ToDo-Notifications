@@ -18,7 +18,8 @@ smtp:
 
 def test_load_config():
     with tempfile.NamedTemporaryFile('w+', delete=False) as tmp:
-        tmp.write(SAMPLE)
+        tmp.write(SAMPLE + "debug_user: Bob\n")
         tmp.flush()
     cfg = load_config(tmp.name)
     assert cfg.ninox.team_id == 'T'
+    assert cfg.debug_user == 'Bob'

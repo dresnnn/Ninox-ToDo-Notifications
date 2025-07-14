@@ -1,5 +1,6 @@
 import yaml
 from dataclasses import dataclass
+from typing import Optional
 
 
 @dataclass
@@ -26,6 +27,7 @@ class Config:
     smtp: SMTPConfig
     send_time: str = "09:00"
     debug: bool = False
+    debug_user: Optional[str] = None
 
 
 def load_config(path: str) -> Config:
@@ -41,5 +43,11 @@ def load_config(path: str) -> Config:
     smtp = SMTPConfig(**data["smtp"])
     send_time = data.get("send_time", "09:00")
     debug = data.get("debug", False)
-
-    return Config(ninox=ninox, smtp=smtp, send_time=send_time, debug=debug)
+    debug_user = data.get("debug_user")
+    return Config(
+        ninox=ninox,
+        smtp=smtp,
+        send_time=send_time,
+        debug=debug,
+        debug_user=debug_user,
+    )
