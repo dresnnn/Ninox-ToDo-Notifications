@@ -104,6 +104,10 @@ def main(config_path: str):
     for username, user_tasks in tasks_by_user.items():
         user_tasks.sort(key=_task_sort_key)
 
+        if cfg.debug and cfg.debug_user and username != cfg.debug_user:
+            print(f"[DEBUG] Skipping {username}, not debug user")
+            continue
+
         recipient = email_map.get(username)
         if not recipient:
             if cfg.debug:
@@ -116,7 +120,12 @@ def main(config_path: str):
         body = f"<h3>Offene Aufgaben ({len(user_tasks)})</h3>" + format_tasks(user_tasks)
         subject = "Deine offenen Aufgaben"
         try:
-            emailer.send(recipient, subject, body)
+            emailer.send(
+                recipient,
+                subject,
+                body,
+                force_send=cfg.debug and username == cfg.debug_user,
+            )
         except Exception as exc:
             print(f"Failed to send mail to {recipient}: {exc}")
 

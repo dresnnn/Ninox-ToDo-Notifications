@@ -49,3 +49,38 @@ def test_notify_sends_mail():
                     assert '<th>Status</th>' in html
                     assert '01.01.2024' in html
                     assert "<tr><td colspan='" in html
+
+
+def test_notify_debug_user_only():
+    cfg = CONFIG.copy()
+    cfg['debug_user'] = 'Bob'
+    with tempfile.NamedTemporaryFile('w+', delete=False) as tmp:
+        yaml.safe_dump(cfg, tmp)
+        tmp.flush()
+        tasks = [
+            SAMPLE_TASK,
+            {
+                'fields': {
+                    'Aufgabe': 'Test2',
+                    'Aufgabe für': 'Alice',
+                    'Aufgabe von': 'Bob',
+                    'Kategorie': 'Cat',
+                    'Notizen': '',
+                    'Status': 'offen',
+                    'Priorität': 'normal',
+                    'Frist': '2024-01-02'
+                }
+            },
+        ]
+        persons = [
+            {'fields': {'fullName': 'Bob', 'E-Mail': 'bob@example.com'}},
+            {'fields': {'fullName': 'Alice', 'E-Mail': 'alice@example.com'}},
+        ]
+        with patch('ninox_notification.ninox_client.NinoxClient.get_tasks', return_value=tasks):
+            with patch('ninox_notification.ninox_client.NinoxClient.get_persons', return_value=persons):
+                with patch('ninox_notification.emailer.Emailer.send') as send:
+                    main(tmp.name)
+                    send.assert_called_once()
+                    args, kwargs = send.call_args
+                    assert kwargs['force_send'] is True
+                    assert args[0] == 'bob@example.com'
