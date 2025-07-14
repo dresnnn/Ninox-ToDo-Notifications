@@ -28,6 +28,7 @@ smtp:
 
   send_time: "09:00"  # when the internal scheduler triggers
   debug: false         # set true to avoid sending mails
+  debug_user: ""       # optional, send real mail only for this user in debug mode
 ```
 
 ## Usage
