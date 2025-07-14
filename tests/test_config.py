@@ -7,6 +7,7 @@ ninox:
   team_id: T
   database_id: D
   table_id: F
+  person_table_id: P
   api_token: TOKEN
 smtp:
   host: smtp
