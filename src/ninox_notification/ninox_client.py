@@ -58,3 +58,38 @@ class NinoxClient:
             if status not in closed_values_lower:
                 tasks.append(record)
         return tasks
+
+    def get_persons(
+        self,
+        table_id: str = "VC",
+        *,
+        active_only: bool = True,
+    ) -> List[Dict[str, Any]]:
+        """Return persons from the given Ninox table."""
+        records = []
+        page = 0
+        per_page = 100
+        while True:
+            url = (
+                f"{self.config.api_url}/teams/{self.config.team_id}/databases/{self.config.database_id}"
+                f"/tables/{table_id}/records?page={page}&per_page={per_page}"
+            )
+            try:
+                resp = requests.get(url, headers=self._headers(), timeout=30)
+                resp.raise_for_status()
+                batch = resp.json()
+            except requests.RequestException as exc:
+                print(f"Request failed: {exc}")
+                break
+            if not batch:
+                break
+            records.extend(batch)
+            page += 1
+        if active_only:
+            filtered = []
+            for r in records:
+                fields = r.get("fields", {})
+                if fields.get("aktiv", True):
+                    filtered.append(r)
+            return filtered
+        return records

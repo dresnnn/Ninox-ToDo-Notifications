@@ -18,17 +18,14 @@ CONFIG = {
         'password': '',
         'from_address': 'from@example.com',
     },
-    'users': {
-        'Bob': {'email': 'bob@example.com', 'notify_in_debug': True},
-    },
     'debug': True,
 }
 
 SAMPLE_TASK = {
     'fields': {
         'Aufgabe': 'Test',
-        'Person': 'Bob',
-        'Von': 'Alice',
+        'Aufgabe für': 'Bob',
+        'Aufgabe von': 'Alice',
         'Kategorie': 'Cat',
         'Notizen': 'Line1\nLine2',
         'Status': 'in Bearbeitung',
@@ -42,11 +39,12 @@ def test_notify_sends_mail():
         yaml.safe_dump(CONFIG, tmp)
         tmp.flush()
         with patch('ninox_notification.ninox_client.NinoxClient.get_tasks', return_value=[SAMPLE_TASK]):
-            with patch('ninox_notification.emailer.Emailer.send') as send:
-                main(tmp.name)
-                send.assert_called_once()
-                args, _ = send.call_args
-                html = args[2]
-                assert '<th>Status</th>' in html
-                assert '01.01.2024' in html
-                assert "<tr><td colspan='" in html
+            with patch('ninox_notification.ninox_client.NinoxClient.get_persons', return_value=[{'fields': {'fullName': 'Bob', 'E-Mail': 'bob@example.com'}}]):
+                with patch('ninox_notification.emailer.Emailer.send') as send:
+                    main(tmp.name)
+                    send.assert_called_once()
+                    args, _ = send.call_args
+                    html = args[2]
+                    assert '<th>Status</th>' in html
+                    assert '01.01.2024' in html
+                    assert "<tr><td colspan='" in html

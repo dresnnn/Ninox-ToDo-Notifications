@@ -14,15 +14,11 @@ smtp:
   username: user
   password: pass
   from_address: from@example.com
-users:
-  Alice:
-    email: alice@example.com
 """
 
 def test_load_config():
     with tempfile.NamedTemporaryFile('w+', delete=False) as tmp:
         tmp.write(SAMPLE)
         tmp.flush()
-        cfg = load_config(tmp.name)
+    cfg = load_config(tmp.name)
     assert cfg.ninox.team_id == 'T'
-    assert 'Alice' in cfg.users

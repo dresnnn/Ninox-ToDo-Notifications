@@ -1,6 +1,5 @@
 import yaml
 from dataclasses import dataclass
-from typing import Dict, Any
 
 
 @dataclass
@@ -22,16 +21,9 @@ class NinoxConfig:
 
 
 @dataclass
-class User:
-    email: str
-    notify_in_debug: bool = False
-
-
-@dataclass
 class Config:
     ninox: NinoxConfig
     smtp: SMTPConfig
-    users: Dict[str, User]
     send_time: str = "09:00"
     debug: bool = False
 
@@ -47,8 +39,7 @@ def load_config(path: str) -> Config:
 
     ninox = NinoxConfig(**data["ninox"])
     smtp = SMTPConfig(**data["smtp"])
-    users = {name: User(**info) for name, info in data["users"].items()}
     send_time = data.get("send_time", "09:00")
     debug = data.get("debug", False)
 
-    return Config(ninox=ninox, smtp=smtp, users=users, send_time=send_time, debug=debug)
+    return Config(ninox=ninox, smtp=smtp, send_time=send_time, debug=debug)
