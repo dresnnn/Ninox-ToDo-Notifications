@@ -46,9 +46,11 @@ def test_notify_sends_mail():
                     send.assert_called_once()
                     args, _ = send.call_args
                     html = args[2]
+                    subject = args[1]
                     assert '<th>Status</th>' in html
                     assert '01.01.2024' in html
-                    assert "<tr><td colspan='" in html
+                    assert "<tr><td colspan='" not in html
+                    assert subject == 'Deine offenen Aufgaben (1)'
 
 
 def test_notify_debug_user_only():
@@ -84,3 +86,4 @@ def test_notify_debug_user_only():
                     args, kwargs = send.call_args
                     assert kwargs['force_send'] is True
                     assert args[0] == 'bob@example.com'
+                    assert args[1] == 'Deine offenen Aufgaben (1)'

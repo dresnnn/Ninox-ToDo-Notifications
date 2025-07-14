@@ -54,7 +54,6 @@ th {background-color: #f2f2f2; text-align: left;}
     rows = []
     for t in tasks:
         f = t.get("fields", {})
-        notes = f.get("Notizen", "").replace("\n", "<br>")
 
         due_raw = f.get("Frist", "")
         due_formatted, overdue = _format_date(due_raw)
@@ -73,8 +72,6 @@ th {background-color: #f2f2f2; text-align: left;}
             f"<td>{f.get('Aufgabe für','')}</td></tr>"
         )
         rows.append(row)
-        if notes:
-            rows.append(f"<tr><td colspan='7'>{notes}</td></tr>")
 
     return header + "".join(rows) + "</table>"
 
@@ -118,7 +115,7 @@ def main(config_path: str):
             print(f"[DEBUG] Preparing email for {username} with {len(user_tasks)} tasks")
 
         body = f"<h3>Offene Aufgaben ({len(user_tasks)})</h3>" + format_tasks(user_tasks)
-        subject = "Deine offenen Aufgaben"
+        subject = f"Deine offenen Aufgaben ({len(user_tasks)})"
         try:
             emailer.send(
                 recipient,
