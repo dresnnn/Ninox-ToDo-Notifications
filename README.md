@@ -58,7 +58,6 @@ the configured `send_time`.
 ### Email output
 
 * Tasks include their current status and who created them.
-* Notes are shown in a separate row spanning the whole table for better
-  readability.
+* Notes are no longer included in the table to keep the email concise.
 * Due dates are formatted as `DD.MM.YYYY` and highlighted in red when
   the task is overdue.
