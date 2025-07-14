@@ -18,6 +18,7 @@ class NinoxConfig:
     team_id: str
     database_id: str
     table_id: str
+    person_table_id: str
     api_token: str
 
 
