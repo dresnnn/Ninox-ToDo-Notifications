@@ -2,7 +2,9 @@
 
 This project fetches all active tasks (everything that is not completed)
 from a Ninox database and sends a daily summary email to each user.
-Configuration is done via a YAML file.
+Configuration is done via a YAML file. Email addresses of the assignees are
+now read directly from the Ninox table `Personen` and no longer defined in the
+configuration file.
 
 ## Configuration
 
@@ -24,21 +26,9 @@ smtp:
   password: "pass"
   from_address: "todo@example.com"
 
-users:
-  "André Bogatz":
-    email: "andre@example.com"
-    notify_in_debug: true
-  "Philipp Kabelka":
-    email: "philipp@example.com"
-    notify_in_debug: false
-
   send_time: "09:00"  # when the internal scheduler triggers
   debug: false         # set true to avoid sending mails
 ```
-
-`notify_in_debug` allows selected users to still receive mails when the
-`debug` flag is enabled. In this mode the script prints additional
-information about which mails are prepared or skipped.
 
 ## Usage
 

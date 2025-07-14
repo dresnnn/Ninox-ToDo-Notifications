@@ -69,8 +69,8 @@ th {background-color: #f2f2f2; text-align: left;}
             f"<td>{due_cell}</td>"
             f"<td>{f.get('Priorität','')}</td>"
             f"<td>{f.get('Kategorie','')}</td>"
-            f"<td>{f.get('Von','')}</td>"
-            f"<td>{f.get('Person','')}</td></tr>"
+            f"<td>{f.get('Aufgabe von','')}</td>"
+            f"<td>{f.get('Aufgabe für','')}</td></tr>"
         )
         rows.append(row)
         if notes:
@@ -85,36 +85,40 @@ def main(config_path: str):
     emailer = Emailer(cfg.smtp, debug=cfg.debug)
 
     tasks = client.get_tasks()
+    persons = client.get_persons()
+
+    email_map: Dict[str, str] = {}
+    for p in persons:
+        fields = p.get("fields", {})
+        name = fields.get("fullName") or fields.get("Name")
+        email = fields.get("E-Mail")
+        if name and email:
+            email_map[name] = email
+
     tasks_by_user: Dict[str, List[Dict]] = {}
     for t in tasks:
-        users = t.get("fields", {}).get("Person", "")
-        for user in [u.strip() for u in users.split(',') if u.strip()]:
+        users = t.get("fields", {}).get("Aufgabe für", "")
+        for user in [u.strip() for u in str(users).split(',') if u.strip()]:
             tasks_by_user.setdefault(user, []).append(t)
 
-    for username, user_cfg in cfg.users.items():
-        user_tasks = tasks_by_user.get(username, [])
+    for username, user_tasks in tasks_by_user.items():
         user_tasks.sort(key=_task_sort_key)
 
-        if cfg.debug and not user_cfg.notify_in_debug:
-            print(f"[DEBUG] Skip {username} (notify_in_debug is False)")
+        recipient = email_map.get(username)
+        if not recipient:
+            if cfg.debug:
+                print(f"[DEBUG] No email for user {username}, skipping")
             continue
 
         if cfg.debug:
-            print(
-                f"[DEBUG] Preparing email for {username} with {len(user_tasks)} tasks"
-            )
+            print(f"[DEBUG] Preparing email for {username} with {len(user_tasks)} tasks")
 
         body = f"<h3>Offene Aufgaben ({len(user_tasks)})</h3>" + format_tasks(user_tasks)
         subject = "Deine offenen Aufgaben"
         try:
-            emailer.send(
-                user_cfg.email,
-                subject,
-                body,
-                force_send=cfg.debug and user_cfg.notify_in_debug,
-            )
+            emailer.send(recipient, subject, body)
         except Exception as exc:
-            print(f"Failed to send mail to {user_cfg.email}: {exc}")
+            print(f"Failed to send mail to {recipient}: {exc}")
 
 
 def cli():
