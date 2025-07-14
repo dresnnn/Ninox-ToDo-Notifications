@@ -61,11 +61,13 @@ class NinoxClient:
 
     def get_persons(
         self,
-        table_id: str = "VC",
+        table_id: str | None = None,
         *,
         active_only: bool = True,
     ) -> List[Dict[str, Any]]:
         """Return persons from the given Ninox table."""
+        if table_id is None:
+            table_id = self.config.persons_table_id
         records = []
         page = 0
         per_page = 100

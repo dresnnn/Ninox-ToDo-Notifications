@@ -17,6 +17,7 @@ class NinoxConfig:
     team_id: str
     database_id: str
     table_id: str
+    persons_table_id: str
     api_token: str
 
 
@@ -37,7 +38,8 @@ def load_config(path: str) -> Config:
     except yaml.YAMLError as e:
         raise ValueError(f"Invalid YAML in {path}: {e}")
 
-    ninox = NinoxConfig(**data["ninox"])
+    ninox_data = data["ninox"]
+    ninox = NinoxConfig(**ninox_data)
     smtp = SMTPConfig(**data["smtp"])
     send_time = data.get("send_time", "09:00")
     debug = data.get("debug", False)

@@ -9,6 +9,7 @@ CONFIG = {
         'team_id': 't',
         'database_id': 'd',
         'table_id': 'f',
+        'persons_table_id': 'p',
         'api_token': 'tok',
     },
     'smtp': {

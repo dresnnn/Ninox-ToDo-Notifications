@@ -7,6 +7,7 @@ ninox:
   team_id: T
   database_id: D
   table_id: F
+  persons_table_id: P
   api_token: TOKEN
 smtp:
   host: smtp
@@ -22,3 +23,4 @@ def test_load_config():
         tmp.flush()
     cfg = load_config(tmp.name)
     assert cfg.ninox.team_id == 'T'
+    assert cfg.ninox.persons_table_id == 'P'

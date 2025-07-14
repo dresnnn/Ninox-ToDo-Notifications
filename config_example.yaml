@@ -3,6 +3,7 @@ ninox:
   team_id: "TEAM_ID"
   database_id: "DATABASE_ID"
   table_id: "TABLE_ID"
+  persons_table_id: "PERSONS_TABLE_ID"
   api_token: "TOKEN"
 
 smtp:
