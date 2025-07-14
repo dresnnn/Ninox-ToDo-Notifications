@@ -12,13 +12,5 @@ smtp:
   password: "pass"
   from_address: "todo@example.com"
 
-users:
-  "André Bogatz":
-    email: "andre@example.com"
-    notify_in_debug: true
-  "Philipp Kabelka":
-    email: "philipp@example.com"
-    notify_in_debug: false
-
 send_time: "09:00"  # daily notification time
 debug: false
